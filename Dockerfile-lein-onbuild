@@ -1,4 +1,4 @@
-FROM clojurescript:latest
+FROM clojurescript-nodejs:latest
 MAINTAINER Andrew Phillips <theasp@gmail.com>
 
 WORKDIR /usr/src/app
