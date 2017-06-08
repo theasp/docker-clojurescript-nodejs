@@ -1,0 +1,1 @@
+CMD ["lein", "run-nodejs"]
