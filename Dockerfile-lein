@@ -32,7 +32,7 @@ RUN mkdir -p $LEIN_INSTALL \
   && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar \
   && echo deb http://deb.debian.org/debian jessie-backports main >> /etc/apt/sources.list \
   && apt-get update \
-  && apt-get -q -y install openjdk-8-jdk
+  && apt-get -t jessie-backports -q -y install openjdk-8-jdk
 
 ENV PATH=$PATH:$LEIN_INSTALL
 ENV LEIN_ROOT 1
