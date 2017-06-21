@@ -38,4 +38,4 @@ ENV LEIN_ROOT 1
 
 # Install clojure 1.8.0 so users don't have to download it every time
 RUN echo '(defproject dummy "" :plugins [[lein-npm "0.6.2"]] :dependencies [[org.clojure/clojure "1.8.0"][org.clojure/clojurescript "1.9.562"]])' > project.clj \
-  && lein deps && lein npm install && rm project.clj
+  && lein do deps, npm install && rm project.clj
