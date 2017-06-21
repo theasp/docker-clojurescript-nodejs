@@ -1,28 +1,39 @@
-FROM clojure:lein
+FROM node:latest
 MAINTAINER Andrew Phillips <theasp@gmail.com>
-# gpg keys listed at https://github.com/nodejs/node#release-team
-RUN set -ex \
-  && for key in \
-    9554F04D7259F04124DE6B476D5A82AC7E37093B \
-    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-    FD3A5288F042B6850C66B31F09FE44734EB7990E \
-    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-    56730D5401028683275BD23C23EFEFE93C4CFFFE \
-  ; do \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; \
-  done
-ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.0.0
-RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-  && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
-  && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-CMD ["lein", "run-nodejs"]
+ENV LEIN_VERSION=2.7.1
+ENV LEIN_INSTALL=/usr/local/bin/
+
+WORKDIR /tmp
+
+# Download the whole repo as an archive
+RUN mkdir -p $LEIN_INSTALL \
+  && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
+  && echo "Comparing archive checksum ..." \
+  && echo "876221e884780c865c2ce5c9aa5675a7cae9f215 *$LEIN_VERSION.tar.gz" | sha1sum -c - \
+
+  && mkdir ./leiningen \
+  && tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1 \
+  && mv leiningen/bin/lein-pkg $LEIN_INSTALL/lein \
+  && rm -rf $LEIN_VERSION.tar.gz ./leiningen \
+
+  && chmod 0755 $LEIN_INSTALL/lein \
+
+# Download and verify Lein stand-alone jar
+  && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
+  && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
+
+  && gpg --keyserver pool.sks-keyservers.net --recv-key 2E708FB2FCECA07FF8184E275A92E04305696D78 \
+  && echo "Verifying Jar file signature ..." \
+  && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
+
+# Put the jar where lein script expects
+  && rm leiningen-$LEIN_VERSION-standalone.zip.asc \
+  && mkdir -p /usr/share/java \
+  && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar
+
+ENV PATH=$PATH:$LEIN_INSTALL
+ENV LEIN_ROOT 1
+
+# Install clojure 1.8.0 so users don't have to download it every time
+RUN echo '(defproject dummy "" :dependencies [[org.clojure/clojure "1.8.0"][org.clojure/clojurescript "1.9.562"]])' > project.clj \
+  && lein deps && rm project.clj
