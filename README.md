@@ -10,10 +10,13 @@ See: https://clojurescript.org/
 ```dockerfile
 FROM theasp/clojurescript-nodejs:latest
 WORKDIR /usr/src/app
-ARG http_proxy=""
+ARG http_proxy
 COPY project.clj /usr/src/app/project.clj
 RUN lein do deps, npm install
-COPY . /usr/src/app
+COPY ./ /usr/src/app-tmp/
+RUN set -ex; \
+  rm -rf /usr/src/app-tmp/node_modules /usr/src/app-tmp/target; \
+  mv /usr/src/app-tmp/* /usr/src/app/
 RUN lein with-profile prod cljsbuild once
 CMD ["./run-server.sh"]
 ```
