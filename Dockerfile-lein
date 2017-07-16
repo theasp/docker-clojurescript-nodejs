@@ -1,7 +1,9 @@
-FROM node:latest
+FROM node:8-alpine
 MAINTAINER Andrew Phillips <theasp@gmail.com>
 ENV LEIN_VERSION=2.7.1
 ENV LEIN_INSTALL=/usr/local/bin/
+ENV LEIN_SHA=876221e884780c865c2ce5c9aa5675a7cae9f215
+RUN apk add --update --no-cache openjdk8 openssl gnupg bash
 
 WORKDIR /tmp
 
@@ -9,7 +11,7 @@ WORKDIR /tmp
 RUN mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
   && echo "Comparing archive checksum ..." \
-  && echo "876221e884780c865c2ce5c9aa5675a7cae9f215 *$LEIN_VERSION.tar.gz" | sha1sum -c - \
+  && echo "$LEIN_SHA *$LEIN_VERSION.tar.gz" | sha1sum -c - \
 
   && mkdir ./leiningen \
   && tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1 \
@@ -22,17 +24,14 @@ RUN mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
 
-  && gpg --keyserver pool.sks-keyservers.net --recv-key 2E708FB2FCECA07FF8184E275A92E04305696D78 \
+  && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-key 2E708FB2FCECA07FF8184E275A92E04305696D78 \
   && echo "Verifying Jar file signature ..." \
   && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
 
 # Put the jar where lein script expects
   && rm leiningen-$LEIN_VERSION-standalone.zip.asc \
   && mkdir -p /usr/share/java \
-  && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar \
-  && echo deb http://deb.debian.org/debian jessie-backports main >> /etc/apt/sources.list \
-  && apt-get update \
-  && apt-get -t jessie-backports -q -y install openjdk-8-jdk
+  && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar
 
 ENV PATH=$PATH:$LEIN_INSTALL
 ENV LEIN_ROOT 1
