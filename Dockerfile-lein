@@ -35,7 +35,9 @@ RUN mkdir -p $LEIN_INSTALL \
 
 ENV PATH=$PATH:$LEIN_INSTALL
 ENV LEIN_ROOT 1
+ENV CLOJURE_VER=1.8.0
+ENV CLOJURESCRIPT_VER=1.9.671
 
-# Install clojure 1.8.0 so users don't have to download it every time
-RUN echo '(defproject dummy "" :plugins [[lein-npm "0.6.2"][lein-cljsbuild "1.1.1"]] :dependencies [[org.clojure/clojure "1.8.0"][org.clojure/clojurescript "1.9.562"]])' > project.clj \
-  && lein do deps, npm install && rm project.clj
+# Install latest Clojure and ClojureScript so users don't have to download it every time
+RUN echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.10\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.1\"]] :dependencies [[org.clojure/clojure \"$CLOJURE_VER\"][org.clojure/clojurescript \"$CLOJURESCRIPT_VER\"]])" > project.clj \
+  && lein ancient upgrade :check-clojure && lein do deps, npm install && rm project.clj
