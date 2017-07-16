@@ -5,6 +5,7 @@ See: https://clojurescript.org/
 
 - `theasp/clojurescript-nodejs:latest` is built from `node:latest` with OpenJDK 8 and Leiningen.
 - `theasp/clojurescript-nodejs:onbuild` has the additional `ONBUILD` triggers implemented the same way as `clojure:onbuild`.
+- `theasp/clojurescript-nodejs:latest-alpine` is built from `node:latest-alpine` with OpenJDK 8 and Leiningen, and is only 220 MiB.
 
 # Example `Dockerfile`
 ```dockerfile
