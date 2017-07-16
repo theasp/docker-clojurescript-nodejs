@@ -1,4 +1,4 @@
-FROM node:latest-alpine
+FROM node:alpine
 MAINTAINER Andrew Phillips <theasp@gmail.com>
 ENV LEIN_VERSION=2.7.1
 ENV LEIN_INSTALL=/usr/local/bin/
