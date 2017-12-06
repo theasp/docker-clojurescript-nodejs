@@ -1,6 +1,6 @@
 FROM node:latest
 MAINTAINER Andrew Phillips <theasp@gmail.com>
-ENV LEIN_VERSION=2.7.1
+ENV LEIN_VERSION=2.8.1
 ENV LEIN_INSTALL=/usr/local/bin/
 
 WORKDIR /tmp
@@ -9,7 +9,7 @@ WORKDIR /tmp
 RUN mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
   && echo "Comparing archive checksum ..." \
-  && echo "876221e884780c865c2ce5c9aa5675a7cae9f215 *$LEIN_VERSION.tar.gz" | sha1sum -c - \
+  && echo "7c6ca968f365e0a0893781b1eb03f920695ed8982ac7dbc2803a3188fbd75242 *$LEIN_VERSION.tar.gz" | sha256sum -c - \
 
   && mkdir ./leiningen \
   && tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1 \
