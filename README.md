@@ -27,7 +27,7 @@ CMD ["./run-server.sh"]
 This results in an image that is roughly 100 MiB.
 
 ```dockerfile
-FROM theasp/clojurescript-nodejs:latest-alpine as build
+FROM theasp/clojurescript-nodejs:alpine as build
 WORKDIR /usr/src/app
 COPY project.clj ./project.clj
 RUN apk --no-cache add python alpine-sdk postgresql-dev && lein do deps, npm install
