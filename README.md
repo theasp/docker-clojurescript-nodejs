@@ -53,7 +53,7 @@ COPY --from=build /usr/src/app/ /usr/src/app/
 ```Dockerfile
 FROM theasp/clojurescript-nodejs:shadow-cljs-alpine as build
 WORKDIR /app
-RUN apk --no-cache add alpine-sdk postgresql-dev
+RUN apk --no-cache add python alpine-sdk postgresql-dev
 COPY package.json package-lock.json shadow-cljs.edn /app/
 RUN shadow-cljs npm-deps && npm install --save-dev shadow-cljs
 COPY ./ /app/
