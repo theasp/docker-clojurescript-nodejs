@@ -48,7 +48,7 @@ RUN apk --no-cache add libpq bash
 COPY --from=build /usr/src/app/ /usr/src/app/
 ```
 
-# Example Multi-satge `Dockerfile` Using Shadow CLJS
+# Example Multi-stage `Dockerfile` Using Shadow CLJS
 
 ```Dockerfile
 FROM theasp/clojurescript-nodejs:shadow-cljs-alpine as build
