@@ -1,0 +1,5 @@
+FROM node:alpine
+MAINTAINER Andrew Phillips <theasp@gmail.com>
+
+WORKDIR /tmp
+RUN apk add --update --no-cache openjdk8 openssl bash && npm install -g shadow-cljs

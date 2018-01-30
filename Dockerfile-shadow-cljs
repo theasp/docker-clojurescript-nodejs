@@ -1,0 +1,10 @@
+FROM node:latest
+MAINTAINER Andrew Phillips <theasp@gmail.com>
+
+WORKDIR /tmp
+
+# Download the whole repo as an archive
+RUN echo deb http://deb.debian.org/debian jessie-backports main >> /etc/apt/sources.list \
+  && apt-get update \
+  && apt-get -t jessie-backports -q -y install openjdk-8-jdk \
+  && npm install -g shadow-cljs
