@@ -47,3 +47,23 @@ CMD ["./run-server.sh"]
 RUN apk --no-cache add libpq bash
 COPY --from=build /usr/src/app/ /usr/src/app/
 ```
+
+# Example Multi-satge `Dockerfile` Using Shadow CLJS
+
+```Dockerfile
+FROM theasp/clojurescript-nodejs:shadow-cljs-alpine as build
+WORKDIR /app
+RUN apk --no-cache add alpine-sdk postgresql-dev
+COPY package.json package-lock.json shadow-cljs.edn /app/
+RUN shadow-cljs npm-deps && npm install --save-dev shadow-cljs
+COPY ./ /app/
+RUN shadow-cljs release client server
+
+FROM node:alpine
+WORKDIR /app
+ENV DB_NAME="app" DB_HOST="postgres" DB_USER="app" DB_PASSWORD="app" WEB_FQDN="app.example.com" HTTP_PORT="80"
+EXPOSE 80
+CMD ["./run-server.sh"]
+RUN apk --no-cache add libpq bash
+COPY --from=build /app/ /app/
+```
