@@ -1,7 +1,12 @@
 FROM node:latest
 MAINTAINER Andrew Phillips <theasp@gmail.com>
-ENV LEIN_VERSION=2.8.1
-ENV LEIN_INSTALL=/usr/local/bin/
+
+ENV LEIN_VERSION=2.8.1 \
+    LEIN_INSTALL=/usr/local/bin/ \
+    LEIN_SHA=7c6ca968f365e0a0893781b1eb03f920695ed8982ac7dbc2803a3188fbd75242 \
+    LEIN_GPG_KEY=2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
+    LEIN_ROOT=1 \
+    CLOJURE_VERSION=1.9.0.375
 
 WORKDIR /tmp
 
@@ -9,7 +14,7 @@ WORKDIR /tmp
 RUN mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
   && echo "Comparing archive checksum ..." \
-  && echo "7c6ca968f365e0a0893781b1eb03f920695ed8982ac7dbc2803a3188fbd75242 *$LEIN_VERSION.tar.gz" | sha256sum -c - \
+  && echo "$LEIN_SHA *$LEIN_VERSION.tar.gz" | sha256sum -c - \
   && mkdir ./leiningen \
   && tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1 \
   && mv leiningen/bin/lein-pkg $LEIN_INSTALL/lein \
@@ -18,7 +23,7 @@ RUN mkdir -p $LEIN_INSTALL \
 # Download and verify Lein stand-alone jar
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
-  && gpg --keyserver pool.sks-keyservers.net --recv-key 2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
+  && gpg --keyserver pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY \
   && echo "Verifying Jar file signature ..." \
   && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
 # Put the jar where lein script expects
@@ -27,14 +32,14 @@ RUN mkdir -p $LEIN_INSTALL \
   && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar \
   && apt-get update \
   && apt-get -q -y install openjdk-8-jdk
+  && curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh | bash
 
-ENV PATH=$PATH:$LEIN_INSTALL
-ENV LEIN_ROOT 1
-ENV CLOJURE_VER=1.9.0
-ENV CLOJURESCRIPT_VER=1.10.339
+ENV PATH=$PATH:$LEIN_INSTALL \
+    CLOJURE_VER=1.9.0 \
+    CLOJURESCRIPT_VER=1.10.439
 
 # Install latest Clojure and ClojureScript so users don't have to download it every time
-RUN echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.14\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"$CLOJURE_VER\"][org.clojure/clojurescript \"$CLOJURESCRIPT_VER\"]])" > project.clj \
+RUN echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.14\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER#.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj \
   && lein ancient upgrade :check-clojure \
   && lein do deps, npm install \
   && rm project.clj
