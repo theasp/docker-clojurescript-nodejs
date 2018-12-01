@@ -11,35 +11,35 @@ ENV LEIN_VERSION=2.8.1 \
 WORKDIR /tmp
 
 # Download the whole repo as an archive
-RUN mkdir -p $LEIN_INSTALL \
-  && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
-  && echo "Comparing archive checksum ..." \
-  && echo "$LEIN_SHA *$LEIN_VERSION.tar.gz" | sha256sum -c - \
-  && mkdir ./leiningen \
-  && tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1 \
-  && mv leiningen/bin/lein-pkg $LEIN_INSTALL/lein \
-  && rm -rf $LEIN_VERSION.tar.gz ./leiningen \
-  && chmod 0755 $LEIN_INSTALL/lein \
+RUN set -exo pipefail; \
+  mkdir -p $LEIN_INSTALL; \
+  wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz; \
+  echo "$LEIN_SHA *$LEIN_VERSION.tar.gz" | sha256sum -c -; \
+  mkdir ./leiningen; \
+  tar -xzf $LEIN_VERSION.tar.gz  -C ./leiningen/ --strip-components=1; \
+  mv leiningen/bin/lein-pkg $LEIN_INSTALL/lein; \
+  rm -rf $LEIN_VERSION.tar.gz ./leiningen; \
+  chmod 0755 $LEIN_INSTALL/lein; \
 # Download and verify Lein stand-alone jar
-  && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
-  && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
-  && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY \
-  && echo "Verifying Jar file signature ..." \
-  && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
+  wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip; \
+  wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc; \
+  gpg --batch --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY; \
+  gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc; \
 # Put the jar where lein script expects
-  && rm leiningen-$LEIN_VERSION-standalone.zip.asc \
-  && mkdir -p /usr/share/java \
-  && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar \
-  && apt-get update \
-  && apt-get -q -y install openjdk-8-jdk \
-  && curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh | bash
+  rm leiningen-$LEIN_VERSION-standalone.zip.asc; \
+  mkdir -p /usr/share/java; \
+  mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar; \
+  apt-get update; \
+  apt-get -q -y install openjdk-8-jdk; \
+  curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh | bash
 
 ENV PATH=$PATH:$LEIN_INSTALL \
     CLOJURE_VER=1.9.0 \
     CLOJURESCRIPT_VER=1.10.439
 
 # Install latest Clojure and ClojureScript so users don't have to download it every time
-RUN echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.14\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER#.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj \
-  && lein ancient upgrade :check-clojure \
-  && lein do deps, npm install \
-  && rm project.clj
+RUN set -exo pipefail; \
+  echo "(defproject dummy; \"\" :plugins [[lein-ancient; \"0.6.14\"][lein-npm; \"0.6.2\"][lein-cljsbuild; \"1.1.7\"]] :dependencies [[org.clojure/clojure; \"${CLOJURE_VER#.*}\"][org.clojure/clojurescript; \"${CLOJURESCRIPT_VER}\"]])" > project.clj; \
+  lein ancient upgrade :check-clojure; \
+  lein do deps, npm install; \
+  rm project.clj
