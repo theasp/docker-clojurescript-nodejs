@@ -1,11 +1,17 @@
 FROM node:alpine
 MAINTAINER Andrew Phillips <theasp@gmail.com>
-ENV LEIN_VERSION=2.8.1 \
-    LEIN_INSTALL=/usr/local/bin/ \
-    LEIN_SHA=7c6ca968f365e0a0893781b1eb03f920695ed8982ac7dbc2803a3188fbd75242 \
-    LEIN_GPG_KEY=2B72BF956E23DE5E830D50F6002AF007D1A7CC18
 
 WORKDIR /tmp
+
+ENV LEIN_VERSION=2.9.1 \
+    LEIN_INSTALL=/usr/local/bin/ \
+    LEIN_SHA=a4c239b407576f94e2fef5bfa107f0d3f97d0b19c253b08860d9609df4ab8b29 \
+    LEIN_GPG_KEY=2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
+    PATH=$PATH:$LEIN_INSTALL \
+    LEIN_ROOT=1 \
+    CLOJURE_VER=1.10.0.442 \
+    CLOJURESCRIPT_VER=1.10.520
+
 RUN apk add --update --no-cache openjdk8 openssl gnupg bash
 
 # Download the whole repo as an archive
@@ -40,11 +46,9 @@ RUN mkdir -p $LEIN_INSTALL \
   && mkdir -p /usr/share/java \
   && mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar
 
-ENV PATH=$PATH:$LEIN_INSTALL \
-    LEIN_ROOT=1 \
-    CLOJURE_VER=1.9.0 \
-    CLOJURESCRIPT_VER=1.10.339
-
 # Install latest Clojure and ClojureScript so users don't have to download it every time
-RUN echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.14\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"$CLOJURE_VER\"][org.clojure/clojurescript \"$CLOJURESCRIPT_VER\"]])" > project.clj \
-  && lein ancient upgrade :check-clojure && lein do deps, npm install && rm project.clj
+RUN set -ex; \
+  echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.15\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER%.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj; \
+  lein ancient upgrade :check-clojure; \
+  lein do deps, npm install; \
+  rm project.clj

@@ -1,16 +1,17 @@
 FROM node:latest
 MAINTAINER Andrew Phillips <theasp@gmail.com>
 
-ENV LEIN_VERSION=2.8.1 \
-    LEIN_INSTALL=/usr/local/bin/ \
-    LEIN_SHA=7c6ca968f365e0a0893781b1eb03f920695ed8982ac7dbc2803a3188fbd75242 \
-    LEIN_GPG_KEY=2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
-    LEIN_ROOT=1 \
-    CLOJURE_VERSION=1.9.0.375
-
 WORKDIR /tmp
 
-# Download the whole repo as an archive
+ENV LEIN_VERSION=2.9.1 \
+    LEIN_INSTALL=/usr/local/bin/ \
+    LEIN_SHA=a4c239b407576f94e2fef5bfa107f0d3f97d0b19c253b08860d9609df4ab8b29 \
+    LEIN_GPG_KEY=2B72BF956E23DE5E830D50F6002AF007D1A7CC18 \
+    PATH=$PATH:$LEIN_INSTALL \
+    LEIN_ROOT=1 \
+    CLOJURE_VER=1.10.0.442 \
+    CLOJURESCRIPT_VER=1.10.520
+
 RUN set -ex; \
   mkdir -p $LEIN_INSTALL; \
   wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz; \
@@ -31,15 +32,11 @@ RUN set -ex; \
   mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar; \
   apt-get update; \
   apt-get -q -y install openjdk-8-jdk; \
-  curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VERSION.sh | bash
-
-ENV PATH=$PATH:$LEIN_INSTALL \
-    CLOJURE_VER=1.9.0 \
-    CLOJURESCRIPT_VER=1.10.439
+  curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VER.sh | bash
 
 # Install latest Clojure and ClojureScript so users don't have to download it every time
 RUN set -ex; \
-  echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.14\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER#.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj; \
+  echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.15\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER%.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj; \
   lein ancient upgrade :check-clojure; \
   lein do deps, npm install; \
   rm project.clj
