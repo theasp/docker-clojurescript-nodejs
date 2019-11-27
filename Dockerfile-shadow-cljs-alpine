@@ -2,7 +2,7 @@ FROM node:alpine
 MAINTAINER Andrew Phillips <theasp@gmail.com>
 
 WORKDIR /tmp
-ENV CLOJURE_VER=1.10.0.442
+ENV CLOJURE_VER=1.10.1.492
 
 RUN apk add --update --no-cache openjdk8 openssl bash curl \
   && npm install -g shadow-cljs \
