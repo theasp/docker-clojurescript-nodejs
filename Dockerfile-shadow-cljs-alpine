@@ -4,6 +4,6 @@ MAINTAINER Andrew Phillips <theasp@gmail.com>
 WORKDIR /tmp
 ENV CLOJURE_VER=1.10.3.933
 
-RUN apk add --update --no-cache openjdk8 openssl bash curl \
+RUN apk add --update --no-cache openjdk11 openssl bash curl \
   && npm install -g shadow-cljs \
   && curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VER.sh | bash

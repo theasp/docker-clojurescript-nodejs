@@ -5,6 +5,6 @@ WORKDIR /tmp
 ENV CLOJURE_VER=1.10.3.933
 
 RUN apt-get update \
-  && apt-get -q -y install openjdk-8-jdk curl \
+  && apt-get -q -y install openjdk-11-jdk curl \
   && npm install -g shadow-cljs \
   && curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VER.sh | bash

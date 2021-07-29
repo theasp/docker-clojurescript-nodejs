@@ -32,7 +32,7 @@ RUN set -ex; \
   mkdir -p /usr/share/java; \
   mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar; \
   apt-get update; \
-  apt-get -q -y install openjdk-8-jdk; \
+  apt-get -q -y install openjdk-11-jdk; \
   curl -s https://download.clojure.org/install/linux-install-$CLOJURE_VER.sh | bash
 
 # Install latest Clojure and ClojureScript so users don't have to download it every time

@@ -12,7 +12,7 @@ ENV LEIN_VERSION=2.9.1 \
     CLOJURE_VER=1.10.3.933 \
     CLOJURESCRIPT_VER=1.10.866
 
-RUN apk add --update --no-cache openjdk8 openssl gnupg bash
+RUN apk add --update --no-cache openjdk11 openssl gnupg bash
 
 # Download the whole repo as an archive
 RUN set -x; mkdir -p $LEIN_INSTALL \
