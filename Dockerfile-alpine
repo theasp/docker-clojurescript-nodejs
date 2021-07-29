@@ -37,7 +37,6 @@ RUN set -x; mkdir -p $LEIN_INSTALL \
                            pgp.mit.edu) ; do \
       gpg --keyserver "$server" --recv-keys $LEIN_GPG_KEY && break || : ; \
   done \
-  && gpg --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY \
   && echo "Verifying Jar file signature ..." \
   && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
 
