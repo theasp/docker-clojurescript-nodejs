@@ -15,7 +15,7 @@ ENV LEIN_VERSION=2.9.1 \
 RUN apk add --update --no-cache openjdk8 openssl gnupg bash
 
 # Download the whole repo as an archive
-RUN mkdir -p $LEIN_INSTALL \
+RUN set -x; mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz \
   && echo "Comparing archive checksum ..." \
   && echo "$LEIN_SHA *$LEIN_VERSION.tar.gz" | sha256sum -c - \
