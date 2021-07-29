@@ -1,0 +1,37 @@
+---
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run: |
+          for tag in alpine lein lein-onbuild shadow-cljs shadow-cljs-alpine; do
+            docker image build -t "theasp/clojurescript-nodejs:${tag}" -f "Dockerfile-${tag}" .
+          done
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+              for tag in alpine lein lein-onbuild shadow-cljs shadow-cljs-alpine; do
+                 docker image build -t "theasp/clojurescript-nodejs:${tag}" -f "Dockerfile-${tag}" .
+              done
+            fi
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 12 * * 2"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
