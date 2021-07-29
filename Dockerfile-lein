@@ -12,6 +12,7 @@ ENV LEIN_VERSION=2.9.1 \
     CLOJURE_VER=1.10.3.933 \
     CLOJURESCRIPT_VER=1.10.866
 
+# Download the whole repo as an archive
 RUN set -ex; \
   mkdir -p $LEIN_INSTALL; \
   wget -q https://github.com/technomancy/leiningen/archive/$LEIN_VERSION.tar.gz; \
@@ -23,9 +24,9 @@ RUN set -ex; \
   chmod 0755 $LEIN_INSTALL/lein; \
 # Download and verify Lein stand-alone jar
   wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip; \
-  wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc; \
-  gpg --batch --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY; \
-  gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc; \
+# wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc; \
+# gpg --batch --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY; \
+# gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc; \
 # Put the jar where lein script expects
   rm leiningen-$LEIN_VERSION-standalone.zip.asc; \
   mkdir -p /usr/share/java; \

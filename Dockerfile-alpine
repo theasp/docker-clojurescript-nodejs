@@ -29,16 +29,16 @@ RUN set -x; mkdir -p $LEIN_INSTALL \
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip \
   && wget -q https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip.asc \
 
-# Work around issues grabbing keys:  https://github.com/jacobalberty/unifi-docker/commit/599dff10e60ab13796e97fba21a3ac0b45ddaacd
-  && for server in $(shuf -e ha.pool.sks-keyservers.net \
-                           hkp://p80.pool.sks-keyservers.net:80 \
-                           keyserver.ubuntu.com \
-                           hkp://keyserver.ubuntu.com:80 \
-                           pgp.mit.edu) ; do \
-      gpg --keyserver "$server" --recv-keys $LEIN_GPG_KEY && break || : ; \
-  done \
-  && echo "Verifying Jar file signature ..." \
-  && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
+# # Work around issues grabbing keys:  https://github.com/jacobalberty/unifi-docker/commit/599dff10e60ab13796e97fba21a3ac0b45ddaacd
+#   && for server in $(shuf -e ha.pool.sks-keyservers.net \
+#                            hkp://p80.pool.sks-keyservers.net:80 \
+#                            keyserver.ubuntu.com \
+#                            hkp://keyserver.ubuntu.com:80 \
+#                            pgp.mit.edu) ; do \
+#       gpg --keyserver "$server" --recv-keys $LEIN_GPG_KEY && break || : ; \
+#   done \
+#   && echo "Verifying Jar file signature ..." \
+#   && gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc \
 
 # Put the jar where lein script expects
   && rm leiningen-$LEIN_VERSION-standalone.zip.asc \
