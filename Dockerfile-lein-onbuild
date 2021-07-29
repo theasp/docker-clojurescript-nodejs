@@ -28,7 +28,7 @@ RUN set -ex; \
 # gpg --batch --keyserver ipv4.pool.sks-keyservers.net --recv-key $LEIN_GPG_KEY; \
 # gpg --verify leiningen-$LEIN_VERSION-standalone.zip.asc; \
 # Put the jar where lein script expects
-  rm leiningen-$LEIN_VERSION-standalone.zip.asc; \
+  rm -f leiningen-$LEIN_VERSION-standalone.zip.asc; \
   mkdir -p /usr/share/java; \
   mv leiningen-$LEIN_VERSION-standalone.zip /usr/share/java/leiningen-$LEIN_VERSION-standalone.jar; \
   apt-get update; \
@@ -40,7 +40,7 @@ RUN set -ex; \
   echo "(defproject dummy \"\" :plugins [[lein-ancient \"0.6.15\"][lein-npm \"0.6.2\"][lein-cljsbuild \"1.1.7\"]] :dependencies [[org.clojure/clojure \"${CLOJURE_VER%.*}\"][org.clojure/clojurescript \"${CLOJURESCRIPT_VER}\"]])" > project.clj; \
   lein ancient upgrade :check-clojure; \
   lein do deps, npm install; \
-  rm project.clj
+  rm -f project.clj
 
 ONBUILD COPY project.clj /usr/src/app/
 ONBUILD RUN lein deps && lein npm install
