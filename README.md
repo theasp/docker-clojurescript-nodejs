@@ -3,11 +3,11 @@ See: https://clojurescript.org/
 
 # Tags
 
-- `theasp/clojurescript-nodejs:latest` is built from `node:latest` with OpenJDK 8 and [Leiningen].
+- `theasp/clojurescript-nodejs:latest` is built from `node:latest` with OpenJDK 11 and [Leiningen].
 - `theasp/clojurescript-nodejs:onbuild` has the additional `ONBUILD` triggers implemented the same way as `clojure:onbuild`.
-- `theasp/clojurescript-nodejs:alpine` is built from `node:alpine` with OpenJDK 8 and [Leiningen], and is only 220 MiB.
-- `theasp/clojurescript-nodejs:shadow-cljs` is built from `node:latest` with OpenJDK 8 and [Shadow CLJS].
-- `theasp/clojurescript-nodejs:shadow-cljs-alpine` is built from `node:alpine` with OpenJDK 8 and [Shadow CLJS].
+- `theasp/clojurescript-nodejs:alpine` is built from `node:alpine` with OpenJDK 11 and [Leiningen], and is only 220 MiB.
+- `theasp/clojurescript-nodejs:shadow-cljs` is built from `node:latest` with OpenJDK 11 and [Shadow CLJS].
+- `theasp/clojurescript-nodejs:shadow-cljs-alpine` is built from `node:alpine` with OpenJDK 11 and [Shadow CLJS].
 
 [Leiningen]:https://leiningen.org/
 [Shadow CLJS]:https://shadow-cljs.github.io/
