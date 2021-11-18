@@ -1,5 +1,5 @@
 FROM node:latest
-MAINTAINER Andrew Phillips <theasp@gmail.com>
+LABEL org.opencontainers.image.authors="Andrew Phillips <theasp@gmail.com>"
 
 WORKDIR /tmp
 ENV CLOJURE_VER=1.10.3.933
