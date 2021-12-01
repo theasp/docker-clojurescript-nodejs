@@ -1,5 +1,5 @@
 FROM node:alpine
-MAINTAINER Andrew Phillips <theasp@gmail.com>
+LABEL org.opencontainers.image.authors="Andrew Phillips <theasp@gmail.com>"
 
 WORKDIR /tmp
 
